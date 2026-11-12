@@ -23,21 +23,20 @@ dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r win-x64 --self-contained t
 
 ### Build release installers
 
-From the repository root, publish a self-contained executable for the target platform. Use the
-same version for the executable and installer. On Windows, set `ElevatedLaunch=true` to embed
-the installed application's UAC manifest.
+From the repository root, build a self-contained release for the target platform. Windows Setup
+requests elevation at launch, installs the signed sensor driver and Intel temperature module,
+and registers the sensor service. The desktop app launches with the user's regular permissions.
 
 ```powershell
-dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r win-x64 --self-contained true -p:Version=1.1.0 -p:ElevatedLaunch=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o work/installer-win
 dotnet tool install wix --version 4.0.6 --tool-path work/wix
 $env:DOTNET_ROLL_FORWARD = 'Major'
 .\work\wix\wix.exe extension add WixToolset.UI.wixext/4.0.6 WixToolset.Util.wixext/4.0.6
-.\work\wix\wix.exe build -arch x64 -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d Version=1.1.0 -d "SourceRoot=$PWD" -d "PublishDir=$PWD/work/installer-win" -o work/CPUSTATS-v1.1.0-windows-x64.msi packaging/windows/CPUSTATS.wxs
+.\packaging\windows\Build-Setup.ps1 -Version 1.1.1 -Wix work/wix/wix.exe -Output work/installer-win
 ```
 
 ```sh
-dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r linux-x64 --self-contained true -p:Version=1.1.0 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o work/installer-linux
-sh packaging/linux/build-deb.sh 1.1.0 work/installer-linux/CPUSTATS work/cpustats_1.1.0_amd64.deb
+dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r linux-x64 --self-contained true -p:Version=1.1.1 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o work/installer-linux
+sh packaging/linux/build-deb.sh 1.1.1 work/installer-linux/CPUSTATS work/cpustats_1.1.1_amd64.deb
 ```
 
 ### Linux telemetry and device access
@@ -59,14 +58,14 @@ feed. Missing readings are shown as dashes on the panel and as unavailable in th
 
 ## Windows temperatures
 
-Install [PawnIO](https://github.com/namazso/PawnIO.Setup/releases) and run CPUSTATS as administrator
-to let LibreHardwareMonitor read CPU package temperature. Close any running copy of CPUSTATS
-before restarting it with **Run as administrator**.
+Windows Setup installs PawnIO so the CPUSTATS sensor service can read CPU package temperature.
+For a development build outside the installed app, launch from an elevated terminal to read the
+sensors directly.
 
 If the Intel driver does not expose GPU temperature on Arrow Lake-S (Intel PCI host bridge
 `8086:7d1b` and iGPU `8086:7d67`), Windows can read the same GT thermal sensor as the Linux bridge.
-From PowerShell in the repository root, download the optional signed PawnIO module before building
-or publishing the Windows app:
+Windows Setup includes the signed module. For a standalone development build, download the module
+from PowerShell in the repository root:
 
 ```powershell
 .\CPUSTATS\Windows\Get-IntelMchbar.ps1

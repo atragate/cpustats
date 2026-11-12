@@ -1,0 +1,5 @@
+CPUSTATS Setup includes the unmodified PawnIO 2.2.0 installer by namazso.
+PawnIO is distributed under the GNU General Public License version 2 or later
+with a module exception. The license and corresponding driver source are
+available at https://github.com/namazso/PawnIO/tree/2.2.0.
+Original installer: https://github.com/namazso/PawnIO.Setup/releases/tag/2.2.0

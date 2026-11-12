@@ -7,7 +7,7 @@ using LibreHardwareMonitor.Hardware.Gpu;
 namespace CPUSTATS.Services;
 
 [SupportedOSPlatform("windows")]
-internal sealed class WindowsTelemetry : IDisposable
+internal sealed class WindowsTelemetry(bool allowVendorFeed = true) : IDisposable
 {
     private readonly Computer _computer = new() { IsCpuEnabled = true, IsGpuEnabled = true };
     private WindowsIntelGpuTemperature? _intelGpuTemperature;
@@ -18,7 +18,7 @@ internal sealed class WindowsTelemetry : IDisposable
     public TelemetrySnapshot Read()
     {
         var warnings = new List<string>();
-        var freshVendor = LovingCoolFeed.ReadFresh();
+        var freshVendor = allowVendorFeed ? LovingCoolFeed.ReadFresh() : null;
         int? cpuTemp = null, gpuTemp = null, gpuUsage = null;
         string? cpuName = null, gpuName = null;
         var isArrowLakeGpu = false;
@@ -63,8 +63,10 @@ internal sealed class WindowsTelemetry : IDisposable
         {
             using var identity = WindowsIdentity.GetCurrent();
             var elevated = new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator);
-            if (!elevated) warnings.Add("For hardware temperatures, restart CPUSTATS as administrator with PawnIO installed.");
-            else if (cpuTemp is null) warnings.Add("CPU temperature unavailable; check that PawnIO is installed and running.");
+            if (!elevated) warnings.Add("For hardware temperatures, restart CPUSTATS as administrator.");
+            else if (cpuTemp is null && !File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "PawnIO", "PawnIOLib.dll")))
+                warnings.Add("The Windows sensor driver is missing. Run CPUSTATS Setup and choose Repair.");
+            else if (cpuTemp is null) warnings.Add("CPU temperature is unavailable from the current sensor backend.");
             if (gpuTemp is null && isArrowLakeGpu && !File.Exists(Path.Combine(AppContext.BaseDirectory, "IntelMCHBAR.bin")))
                 warnings.Add("Intel GPU temperature needs the optional IntelMCHBAR module.");
         }

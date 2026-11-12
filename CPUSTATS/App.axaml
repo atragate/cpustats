@@ -1,11 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="CPUSTATS.App">
-  <TrayIcon.Icons>
-    <TrayIcons>
-      <TrayIcon Icon="/Assets/Brand/cpustats.ico" ToolTipText="CPUSTATS" Clicked="ShowWindow" />
-    </TrayIcons>
-  </TrayIcon.Icons>
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.ThemeDictionaries>

@@ -5,11 +5,45 @@
            UpgradeCode="80F8FB60-E445-4AEF-9689-CBD4E62309B2" Scope="perMachine">
     <MajorUpgrade DowngradeErrorMessage="A newer version of CPUSTATS is already installed." />
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
-    <Icon Id="AppIcon" SourceFile="$(var.SourceRoot)/CPUSTATS/Assets/Brand/cpustats.ico" />
-    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <Icon Id="CPUSTATS.exe" SourceFile="$(var.SourceRoot)/CPUSTATS/Assets/Brand/cpustats.ico" />
+    <Property Id="ARPPRODUCTICON" Value="CPUSTATS.exe" />
     <Property Id="ARPURLINFOABOUT" Value="https://github.com/atragate/cpustats" />
     <ui:WixUI Id="WixUI_Minimal" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.ArtDir)/banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.ArtDir)/dialog.bmp" />
     <WixVariable Id="WixUILicenseRtf" Value="$(var.SourceRoot)/packaging/windows/LICENSE.rtf" />
+    <UI>
+      <Dialog Id="CPUSTATSProgress" Width="370" Height="270" Title="CPUSTATS Setup" Modeless="yes">
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17"
+                 Cancel="yes" Default="yes" Text="Cancel">
+          <Publish Event="SpawnDialog" Value="CancelDlg" />
+        </Control>
+        <Control Id="Banner" Type="Bitmap" X="0" Y="0" Width="370" Height="44"
+                 Text="WixUI_Bmp_Banner" />
+        <Control Id="Title" Type="Text" X="20" Y="14" Width="294" Height="17"
+                 Transparent="yes" Text="{\WixUI_Font_Bigger}CPUSTATS Setup" />
+        <Control Id="Status" Type="Text" X="20" Y="66" Width="330" Height="22"
+                 NoPrefix="yes" Text="Preparing changes…">
+          <Subscribe Event="ActionText" Attribute="Text" />
+        </Control>
+        <Control Id="Progress" Type="ProgressBar" X="20" Y="91" Width="330" Height="10"
+                 Text="Setup progress">
+          <Subscribe Event="SetProgress" Attribute="Progress" />
+        </Control>
+        <Control Id="DetailsToggle" Type="CheckBox" X="20" Y="115" Width="140" Height="17"
+                 Property="CPUSTATS_DETAILS" CheckBoxValue="1" Text="Show &amp;details" />
+        <Control Id="Details" Type="Text" X="20" Y="141" Width="330" Height="76"
+                 NoPrefix="yes" Hidden="yes" ShowCondition="CPUSTATS_DETAILS"
+                 HideCondition="NOT CPUSTATS_DETAILS" Text="Waiting for installation details…">
+          <Subscribe Event="ActionData" Attribute="Text" />
+        </Control>
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+      </Dialog>
+      <InstallUISequence>
+        <Show Dialog="ProgressDlg" Before="ExecuteAction" Condition="0" />
+        <Show Dialog="CPUSTATSProgress" Before="ExecuteAction" />
+      </InstallUISequence>
+    </UI>
     <util:CloseApplication Id="InstalledApp" Target="CPUSTATS.exe" PromptToContinue="yes"
                            RebootPrompt="no"
                            Description="CPUSTATS is running. Quit it from the notification area, or end CPUSTATS.exe in Task Manager. Choose Retry after it exits, or Abort to cancel Setup." />
@@ -22,22 +56,65 @@
     <util:CloseApplication Id="VendorMonitor" Target="PC Monitor.exe" PromptToContinue="yes"
                            RebootPrompt="no" Condition='NOT (REMOVE="ALL")'
                            Description="PC Monitor is running and may control the case display. Quit it or end it in Task Manager. Choose Retry after it exits, or Abort to cancel Setup." />
+    <CustomAction Id="InstallSensorDriver" FileRef="DriverHelper" ExeCommand=""
+                  Execute="deferred" Impersonate="no" Return="check" />
+    <UI>
+      <ProgressText Action="InstallSensorDriver" Message="Preparing the hardware sensor driver" />
+    </UI>
+    <InstallExecuteSequence>
+      <Custom Action="InstallSensorDriver" After="InstallFiles" Condition='NOT (REMOVE="ALL")' />
+    </InstallExecuteSequence>
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="CPUSTATS">
         <Component Id="Application">
           <File Id="AppExe" Source="$(var.PublishDir)/CPUSTATS.exe" KeyPath="yes">
             <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="CPUSTATS"
-                      WorkingDirectory="INSTALLFOLDER" Advertise="yes" />
+                      WorkingDirectory="INSTALLFOLDER" Advertise="yes" Icon="CPUSTATS.exe" />
           </File>
+        </Component>
+        <Component Id="SensorService">
+          <File Source="$(var.ArtDir)/CPUSTATS.SensorService.exe" KeyPath="yes" />
+          <ServiceInstall Id="InstallSensors" Name="CPUSTATSSensors" DisplayName="CPUSTATS Sensor Service"
+                          Description="Collects hardware readings for CPUSTATS."
+                          Type="ownProcess" Start="auto" ErrorControl="normal" Arguments="--sensor-service" />
+          <ServiceControl Id="ControlSensors" Name="CPUSTATSSensors" Start="install" Stop="both"
+                          Remove="uninstall" Wait="yes" />
+          <util:ServiceConfig ServiceName="CPUSTATSSensors" FirstFailureActionType="restart" SecondFailureActionType="restart"
+                              ThirdFailureActionType="none" RestartServiceDelayInSeconds="5"
+                              ResetPeriodInDays="1" />
+        </Component>
+        <Component Id="IntelTemperatureModule">
+          <File Source="$(var.PublishDir)/IntelMCHBAR.bin" KeyPath="yes" />
+        </Component>
+        <Component Id="SignInStartup">
+          <RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                         Name="CPUSTATS" Type="string" Value="&quot;[#AppExe]&quot; --tray" KeyPath="yes" />
         </Component>
         <Component Id="License">
           <File Name="LICENSE.txt" Source="$(var.SourceRoot)/LICENSE" KeyPath="yes" />
         </Component>
+        <Directory Id="DriverPayload" Name="Sensor Driver">
+          <Component Id="DriverInstaller">
+            <File Id="DriverHelper" Source="$(var.ArtDir)/InstallDriver.exe" KeyPath="yes" />
+          </Component>
+          <Component Id="DriverPayloadFile">
+            <File Source="$(var.ArtDir)/PawnIO_setup.exe" />
+          </Component>
+          <Component Id="DriverNotices">
+            <File Source="$(var.SourceRoot)/packaging/windows/THIRD-PARTY.txt" />
+          </Component>
+        </Directory>
       </Directory>
     </StandardDirectory>
     <Feature Id="Complete">
       <ComponentRef Id="Application" />
+      <ComponentRef Id="SensorService" />
+      <ComponentRef Id="IntelTemperatureModule" />
+      <ComponentRef Id="SignInStartup" />
       <ComponentRef Id="License" />
+      <ComponentRef Id="DriverInstaller" />
+      <ComponentRef Id="DriverPayloadFile" />
+      <ComponentRef Id="DriverNotices" />
     </Feature>
   </Package>
 </Wix>

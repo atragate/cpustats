@@ -18,7 +18,8 @@ public sealed class TelemetryService : IDisposable
     public TelemetrySnapshot Read()
     {
 #if WINDOWS
-        if (OperatingSystem.IsWindows()) return (_windows ??= new()).Read();
+        if (OperatingSystem.IsWindows())
+            return WindowsSensorService.ReadLatest() ?? (_windows ??= new()).Read();
 #endif
         var gpuCard = LinuxDrmCards().FirstOrDefault();
         var gpuDevice = gpuCard is null ? null : Path.Combine(gpuCard, "device");

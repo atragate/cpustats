@@ -6,7 +6,6 @@
     <Product>CPUSTATS</Product>
     <AssemblyTitle>CPUSTATS</AssemblyTitle>
     <ApplicationIcon>Assets/Brand/cpustats.ico</ApplicationIcon>
-    <ApplicationManifest Condition="'$(RuntimeIdentifier)' == 'win-x64' And '$(ElevatedLaunch)' == 'true'">Windows/elevated.manifest</ApplicationManifest>
     <Description>Desktop monitor and display controller for the darkFlash L280 ATX PC Case.</Description>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -25,11 +24,14 @@
     <PackageReference Include="HidSharp" Version="2.6.4" />
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-')) Or ('$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows')))" />
     <PackageReference Include="System.Management" Version="10.0.2" Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-')) Or ('$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows')))" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.1" Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-')) Or ('$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows')))" />
   </ItemGroup>
   <ItemGroup Condition="!($([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-')) Or ('$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))))">
     <Compile Remove="Services/WindowsTelemetry.cs" />
     <Compile Remove="Services/WindowsHidTransport.cs" />
     <Compile Remove="Services/WindowsIntelGpuTemperature.cs" />
+    <Compile Remove="Services/WindowsSensorService.cs" />
+    <Compile Remove="Windows/WindowsTray.cs" />
   </ItemGroup>
   <ItemGroup Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-')) Or ('$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows')))">
     <None Update="Windows/IntelMCHBAR.bin" Link="IntelMCHBAR.bin" CopyToOutputDirectory="PreserveNewest"

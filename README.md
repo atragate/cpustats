@@ -24,7 +24,7 @@ CPUSTATS is a desktop app for Windows and Linux that drives the built-in tempera
 | | Requirements |
 | --- | --- |
 | Case | darkFlash **L280 ATX PC Case** with its built-in segmented USB display. Other cases and coolers, including the L280mini, are unverified. |
-| Windows | Windows x64. For hardware temperatures, install [PawnIO](https://github.com/namazso/PawnIO.Setup/releases) and run CPUSTATS as administrator. GPU sensor availability depends on the hardware and driver. |
+| Windows | Windows 10 or newer, x64. Setup includes the driver for supported hardware temperature readings. GPU sensor availability depends on the hardware and driver. |
 | Linux | Linux x64, a desktop session, and read/write access to the case display's HID device. Temperature and usage readings depend on the hardware and drivers. |
 
 The desktop overview can show available readings even when the case display is disconnected. The physical panel shows CPU and GPU readings; memory usage is shown in the app.
@@ -35,17 +35,19 @@ Get the installer for your system from the [latest release](https://github.com/a
 
 ### Windows x64
 
-1. Open the `.msi` and approve the Windows installer prompt.
-2. Open **CPUSTATS** from the Start menu and approve UAC to grant administrator access. Install [PawnIO](https://github.com/namazso/PawnIO.Setup/releases) separately for supported hardware temperature readings.
+1. Open the Windows Setup executable and approve the administrator prompt. The wizard then opens and installs CPUSTATS and its sensor driver.
+2. Open **CPUSTATS** from the Start menu. The installed sensor service supplies hardware readings while the desktop app runs with your regular permissions.
 
-If Setup detects a running display utility, quit it or end the named process in Task Manager, then retry. Run the same MSI again to repair or remove an installed copy. Run a newer MSI to upgrade. Older portable copies can be deleted manually after you close them.
+CPUSTATS starts in the notification area when you sign in. You can turn this off in **Settings → Apps → Startup**.
+
+If Setup detects a running display utility, quit it or end the named process in Task Manager, then retry. Run the same Setup executable again to repair or remove an installed copy. Run a newer Setup executable to upgrade. Older portable copies can be deleted manually after you close them.
 
 ### Debian and Ubuntu x64
 
 From the download directory, install the `.deb` with APT so it can resolve runtime dependencies:
 
 ```sh
-sudo apt install ./cpustats_1.1.0_amd64.deb
+sudo apt install ./cpustats_1.1.1_amd64.deb
 ```
 
 Reconnect the case display after installation, then open **CPUSTATS** from the application menu. The installed udev rule grants the active local desktop session access to the L280 USB display. Run CPUSTATS as your regular desktop user.

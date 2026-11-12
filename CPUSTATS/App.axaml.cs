@@ -8,6 +8,7 @@ namespace CPUSTATS;
 
 public sealed class App : Application
 {
+    private MainWindow? _window;
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted()
@@ -17,11 +18,25 @@ public sealed class App : Application
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             var window = new MainWindow();
             window.Closing += HideWindowOnClose;
-            desktop.MainWindow = window;
-            if (TrayIcon.GetIcons(this) is [var tray])
+            _window = window;
+            if (desktop.Args?.Contains("--tray") != true)
+                desktop.MainWindow = window;
+            var menu = CreateTrayMenu(window);
+#if WINDOWS
+            if (OperatingSystem.IsWindows() && WindowsTray.TryCreate(window, menu,
+                () => ShowWindow(null, EventArgs.Empty)) is { } nativeTray)
             {
-                tray.Menu = CreateTrayMenu(window);
-                tray.Icon = window.Icon;
+                desktop.Exit += (_, _) =>
+                {
+                    if (OperatingSystem.IsWindows()) nativeTray.Dispose();
+                };
+            }
+            else
+#endif
+            {
+                var tray = new TrayIcon { Menu = menu, Icon = window.Icon, ToolTipText = "CPUSTATS" };
+                tray.Clicked += ShowWindow;
+                TrayIcon.SetIcons(this, new TrayIcons { tray });
                 window.PropertyChanged += (_, change) =>
                 {
                     if (change.Property == Window.IconProperty)
@@ -92,10 +107,11 @@ public sealed class App : Application
         window.Hide();
     }
 
-    private void ShowWindow(object? sender, EventArgs e)
+    internal void ShowWindow(object? sender, EventArgs e)
     {
-        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: { } window })
+        if (_window is not { } window || ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             return;
+        desktop.MainWindow = window;
 
         if (!window.IsVisible)
             window.Show();
@@ -107,6 +123,9 @@ public sealed class App : Application
     private void Quit(object? sender, EventArgs e)
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.MainWindow ??= _window;
             desktop.Shutdown();
+        }
     }
 }
