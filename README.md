@@ -40,14 +40,16 @@ Get the installer for your system from the [latest release](https://github.com/a
 
 CPUSTATS starts in the notification area when you sign in. You can turn this off in **Settings → Apps → Startup**.
 
-If Setup detects a running display utility, quit it or end the named process in Task Manager, then retry. Run the same Setup executable again to repair or remove an installed copy. Run a newer Setup executable to upgrade. Older portable copies can be deleted manually after you close them.
+If Setup detects a running display utility, you can close it and retry, end the listed apps from Setup, or cancel. **Show details** displays the installation log as it runs. Choose **Finish and start** to open CPUSTATS or **Close** to exit Setup.
+
+Run the same Setup executable again to repair or remove an installed copy. Run a newer Setup executable to upgrade. Older portable copies can be deleted manually after you close them.
 
 ### Debian and Ubuntu x64
 
 From the download directory, install the `.deb` with APT so it can resolve runtime dependencies:
 
 ```sh
-sudo apt install ./cpustats_1.1.1_amd64.deb
+sudo apt install ./cpustats_1.1.2_amd64.deb
 ```
 
 Reconnect the case display after installation, then open **CPUSTATS** from the application menu. The installed udev rule grants the active local desktop session access to the L280 USB display. Run CPUSTATS as your regular desktop user.

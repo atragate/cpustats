@@ -11,6 +11,8 @@ internal static class Setup
     [STAThread]
     private static int Main()
     {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
         try
         {
             using (var mutex = new Mutex(false, @"Global\CPUSTATS.Setup"))
@@ -67,12 +69,10 @@ internal static class Setup
                 if (!StructuralEquals(sha.ComputeHash(source), sha.ComputeHash(cached)))
                     throw new IOException("The cached installer differs from this copy of Setup.");
 
-                var start = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "msiexec.exe"),
-                    "/i \"" + package + "\"") { UseShellExecute = false, WorkingDirectory = cache };
-                using (Process installer = Process.Start(start))
+                using (var window = new SetupWindow(package, version))
                 {
-                    installer.WaitForExit();
-                    return installer.ExitCode;
+                    Application.Run(window);
+                    return window.ExitCode;
                 }
             }
         }
