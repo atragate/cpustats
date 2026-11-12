@@ -21,6 +21,27 @@ dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r linux-x64 --self-contained
 dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r win-x64 --self-contained true
 ```
 
+### Build release installers
+
+From the repository root, publish a self-contained executable for the target platform. Use the
+same version for the executable and installer. On Windows, set `ElevatedLaunch=true` to embed
+the installed application's UAC manifest.
+
+```powershell
+dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r win-x64 --self-contained true -p:Version=1.1.0 -p:ElevatedLaunch=true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o work/installer-win
+dotnet tool install wix --version 4.0.6 --tool-path work/wix
+$env:DOTNET_ROLL_FORWARD = 'Major'
+.\work\wix\wix.exe extension add WixToolset.UI.wixext/4.0.6 WixToolset.Util.wixext/4.0.6
+.\work\wix\wix.exe build -arch x64 -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d Version=1.1.0 -d "SourceRoot=$PWD" -d "PublishDir=$PWD/work/installer-win" -o work/CPUSTATS-v1.1.0-windows-x64.msi packaging/windows/CPUSTATS.wxs
+```
+
+```sh
+dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r linux-x64 --self-contained true -p:Version=1.1.0 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o work/installer-linux
+sh packaging/linux/build-deb.sh 1.1.0 work/installer-linux/CPUSTATS work/cpustats_1.1.0_amd64.deb
+```
+
+### Linux telemetry and device access
+
 On Linux, the L280 HID device must be readable and writable by the logged-in user.
 For systemd distributions, a udev rule can grant access after reconnecting the device:
 
@@ -61,6 +82,7 @@ and GT thermal status registers. Other GPUs still use their existing sensor back
 
 The app sends a 65-byte L280 report every 200 ms and samples sensors once per second.
 The default mode alternates Celsius and usage every six seconds. Celsius, Fahrenheit, and usage
-can also be selected as fixed display modes. A status log is written beside the app executable.
+can also be selected as fixed display modes. The status log is written to `CPUSTATS/last-status.json`
+under the current user's local application data directory.
 
 See [protocol notes](../docs/L280-PROTOCOL.md) for the segment layout and reference test vectors.

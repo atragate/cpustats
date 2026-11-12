@@ -6,6 +6,7 @@
     <Product>CPUSTATS</Product>
     <AssemblyTitle>CPUSTATS</AssemblyTitle>
     <ApplicationIcon>Assets/Brand/cpustats.ico</ApplicationIcon>
+    <ApplicationManifest Condition="'$(RuntimeIdentifier)' == 'win-x64' And '$(ElevatedLaunch)' == 'true'">Windows/elevated.manifest</ApplicationManifest>
     <Description>Desktop monitor and display controller for the darkFlash L280 ATX PC Case.</Description>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

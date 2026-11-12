@@ -282,7 +282,10 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            File.WriteAllText(System.IO.Path.Combine(AppContext.BaseDirectory, "last-status.json"),
+            var statusDirectory = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CPUSTATS");
+            Directory.CreateDirectory(statusDirectory);
+            File.WriteAllText(System.IO.Path.Combine(statusDirectory, "last-status.json"),
                 JsonSerializer.Serialize(new
                 {
                     Telemetry = _current, Page = page.ToString(),

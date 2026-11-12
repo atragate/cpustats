@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=CPUSTATS
+Comment=Monitor CPU and GPU readings and control the darkFlash L280 display
+Exec=/usr/bin/cpustats
+Icon=cpustats
+Terminal=false
+Categories=System;Monitor;

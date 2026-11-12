@@ -1,4 +1,5 @@
 .vs/
+/.wix/
 bin/
 obj/
 intermediatexaml/
@@ -13,3 +14,4 @@ __pycache__/
 /work/
 /CPUSTATS/.nuget/
 /CPUSTATS/Windows/IntelMCHBAR.bin
+last-status.json
