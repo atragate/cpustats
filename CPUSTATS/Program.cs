@@ -23,6 +23,7 @@ internal static class Program
             return;
         }
 
+        if (OperatingSystem.IsWindows()) WindowsTray.UseSystemMenuTheme();
         var showRequest = ThreadPool.RegisterWaitForSingleObject(showWindow,
             (_, _) => Avalonia.Threading.Dispatcher.UIThread.Post(() => (Application.Current as App)?.ShowWindow(null, EventArgs.Empty)),
             null, Timeout.Infinite, false);

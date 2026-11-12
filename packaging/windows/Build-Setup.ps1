@@ -56,7 +56,7 @@ Set-Content -LiteralPath $versionSource -Encoding ascii -Value @(
 $setup = Join-Path $outputDir "CPUSTATS-v$Version-windows-x64-setup.exe"
 $manifest = Join-Path $source 'CPUSTATS\Windows\elevated.manifest'
 $icon = Join-Path $brand 'cpustats.ico'
-$setupSources = 'Setup.cs', 'SetupWindow.cs', 'WindowsInstaller.cs' | ForEach-Object { Join-Path $PSScriptRoot $_ }
+$setupSources = 'Setup.cs', 'SetupWindow.cs', 'SetupLog.cs', 'SetupTheme.cs', 'WindowsInstaller.cs' | ForEach-Object { Join-Path $PSScriptRoot $_ }
 & $csc /nologo /target:winexe /platform:x64 /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.ServiceProcess.dll "/win32manifest:$manifest" "/win32icon:$icon" "/resource:$msi,CPUSTATS.msi" "/out:$setup" $setupSources $versionSource
 if ($LASTEXITCODE -ne 0) { throw 'Could not compile CPUSTATS Setup.' }
 Get-Item -LiteralPath $setup

@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 internal sealed class SetupWindow : Form
 {
@@ -16,16 +17,20 @@ internal sealed class SetupWindow : Form
     private readonly string _package;
     private readonly Label _title = new Label();
     private readonly Label _status = new Label();
-    private readonly ProgressBar _progress = new ProgressBar();
+    private readonly SetupProgress _progress = new SetupProgress();
     private readonly CheckBox _details = new CheckBox { Text = "Show details", AutoSize = true };
-    private readonly TextBox _log = new TextBox
-    {
-        Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Both,
-        WordWrap = false, Visible = false, BackColor = Color.White
-    };
+    private readonly SetupLog _log = new SetupLog { Visible = false };
     private readonly Button _primary = new Button();
     private readonly Button _secondary = new Button();
     private readonly Button _close = new Button { Text = "Close" };
+    private readonly Panel _header = new Panel { Dock = DockStyle.Top, Height = 75 };
+    private readonly Label _brand = new Label();
+    private readonly Label _release = new Label();
+    private readonly FlowLayoutPanel _buttons = new FlowLayoutPanel
+    {
+        Dock = DockStyle.Bottom, Height = 53, Padding = new Padding(15, 8, 17, 6),
+        FlowDirection = FlowDirection.RightToLeft
+    };
     private Action _primaryAction;
     private Action _secondaryAction;
     private bool _busy, _filesInUse, _finished;
@@ -41,51 +46,89 @@ internal sealed class SetupWindow : Form
         Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
         StartPosition = FormStartPosition.CenterScreen;
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(570, 390);
-        MinimumSize = new Size(540, 350);
+        ClientSize = new Size(570, 440);
+        MinimumSize = new Size(540, 410);
         Font = new Font("Segoe UI", 10);
-        BackColor = ColorTranslator.FromHtml("#FAFCFB");
-        ForeColor = ColorTranslator.FromHtml("#152522");
-
-        var header = new Panel { Dock = DockStyle.Top, Height = 75, BackColor = ColorTranslator.FromHtml("#171D20") };
         var mark = new PictureBox { Location = new Point(22, 14), Size = new Size(48, 48), SizeMode = PictureBoxSizeMode.Zoom, Image = Icon.ToBitmap() };
-        var brand = new Label
-        {
-            Text = "CPUSTATS Setup", Location = new Point(84, 12), AutoSize = true,
-            Font = new Font(Font, FontStyle.Bold), ForeColor = ColorTranslator.FromHtml("#F2F6F4")
-        };
-        var release = new Label { Text = "Version " + version, Location = new Point(84, 36), AutoSize = true, ForeColor = ColorTranslator.FromHtml("#85E6C3") };
-        header.Controls.AddRange(new Control[] { mark, brand, release });
+        _brand.Text = "CPUSTATS Setup";
+        _brand.Location = new Point(84, 12);
+        _brand.AutoSize = true;
+        _brand.Font = new Font(Font, FontStyle.Bold);
+        _release.Text = "Version " + new Version(version).ToString(3);
+        _release.Location = new Point(84, 36);
+        _release.AutoSize = true;
+        _header.Controls.AddRange(new Control[] { mark, _brand, _release });
 
         _title.SetBounds(24, 94, 510, 31);
         _title.Font = new Font("Segoe UI", 15, FontStyle.Bold);
         _status.SetBounds(25, 133, 518, 58);
         _progress.SetBounds(25, 197, 520, 12);
         _details.SetBounds(25, 219, 160, 25);
-        _log.SetBounds(25, 250, 520, 75);
-        _log.Font = new Font("Consolas", 9);
+        _log.SetBounds(25, 250, 520, 126);
         foreach (Control control in new Control[] { _title, _status, _progress, _log })
             control.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         _log.Anchor |= AnchorStyles.Bottom;
         _details.CheckedChanged += delegate { _log.Visible = _details.Checked; };
 
-        var buttons = new FlowLayoutPanel
-        {
-            Dock = DockStyle.Bottom, Height = 53, Padding = new Padding(15, 8, 17, 6),
-            FlowDirection = FlowDirection.RightToLeft, BackColor = ColorTranslator.FromHtml("#E9EFEE")
-        };
         foreach (Button button in new[] { _close, _primary, _secondary })
         {
             button.AutoSize = true;
             button.MinimumSize = new Size(85, 30);
-            buttons.Controls.Add(button);
+            button.FlatStyle = FlatStyle.Flat;
+            _buttons.Controls.Add(button);
         }
         _primary.Click += delegate { if (_primaryAction != null) _primaryAction(); };
         _secondary.Click += delegate { if (_secondaryAction != null) _secondaryAction(); };
         _close.Click += delegate { Close(); };
         CancelButton = _close;
-        Controls.AddRange(new Control[] { header, _title, _status, _progress, _details, _log, buttons });
+        Controls.AddRange(new Control[] { _header, _title, _status, _progress, _details, _log, _buttons });
+        ApplyTheme();
         ShowWelcome();
+    }
+
+    private void ApplyTheme()
+    {
+        var theme = new SetupTheme();
+        BackColor = theme.Window;
+        ForeColor = theme.Text;
+        _header.BackColor = theme.Header;
+        _brand.ForeColor = theme.HeaderText;
+        _release.ForeColor = theme.HeaderAccent;
+        _buttons.BackColor = theme.Panel;
+        _details.FlatStyle = FlatStyle.Flat;
+        _details.FlatAppearance.CheckedBackColor = theme.Track;
+        foreach (Button button in new[] { _close, _primary, _secondary })
+        {
+            bool primary = button == _primary;
+            button.BackColor = primary ? theme.Accent : theme.Window;
+            button.ForeColor = primary ? theme.OnAccent : theme.Text;
+            button.FlatAppearance.BorderColor = primary ? theme.Accent : theme.Track;
+        }
+        _progress.ApplyTheme(theme);
+        _log.ApplyTheme(theme);
+        if (IsHandleCreated) theme.ApplyTitleBar(Handle);
+    }
+
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        base.OnHandleCreated(e);
+        ApplyTheme();
+        SystemEvents.UserPreferenceChanged += OnPreferenceChanged;
+    }
+
+    protected override void OnHandleDestroyed(EventArgs e)
+    {
+        SystemEvents.UserPreferenceChanged -= OnPreferenceChanged;
+        base.OnHandleDestroyed(e);
+    }
+
+    private void OnPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+    {
+        if (IsHandleCreated && !IsDisposed)
+        {
+            try { BeginInvoke((Action)ApplyTheme); }
+            catch (InvalidOperationException) { }
+        }
     }
 
     private void ShowWelcome()
@@ -145,7 +188,8 @@ internal sealed class SetupWindow : Form
         _busy = true;
         _title.Text = remove ? "Removing CPUSTATS" : "Applying changes";
         _status.Text = "Preparing Windows Installer…";
-        _progress.Style = ProgressBarStyle.Marquee;
+        _progress.Value = 0;
+        _progress.Marquee = true;
         _progress.Visible = _details.Visible = true;
         _log.Clear();
         AppendLog("Starting Windows Installer.");
@@ -157,7 +201,7 @@ internal sealed class SetupWindow : Form
         _busy = false;
         _close.Enabled = true;
         _close.Text = "Close";
-        _progress.Style = ProgressBarStyle.Continuous;
+        _progress.Marquee = false;
         ExitCode = result;
 
         if (result == 0 || result == 3010)
@@ -207,10 +251,12 @@ internal sealed class SetupWindow : Form
                 _position += _direction * _increment;
                 ShowProgress();
             }
+            string text = kind == 8 ? FormatAction(message) : message.Trim();
+            if (text.Length == 0) return 1;
             BeginInvoke((Action)(() =>
             {
-                AppendLog(message);
-                if (kind == 8) _status.Text = message;
+                AppendLog(text);
+                if (kind == 8) _status.Text = text;
             }));
         }
         if (kind == 6 || kind == 7) return 2;
@@ -244,14 +290,25 @@ internal sealed class SetupWindow : Form
         int value = (int)Math.Max(0, Math.Min(100, 100L * _position / _total));
         BeginInvoke((Action)(() =>
         {
-            _progress.Style = ProgressBarStyle.Continuous;
+            _progress.Marquee = false;
             _progress.Value = value;
         }));
     }
 
     private void AppendLog(string text)
     {
-        _log.AppendText(DateTime.Now.ToString("HH:mm:ss") + "  " + text.Trim() + Environment.NewLine);
+        _log.AppendLine(DateTime.Now.ToString("HH:mm:ss") + "  " + text.Trim());
+    }
+
+    private static string FormatAction(string message)
+    {
+        var action = Regex.Match(message.Trim(), @"^Action\s+\d{1,2}:\d{2}:\d{2}:\s*(?<name>[^.]+)\.\s*(?<label>.*)$");
+        if (!action.Success) return message.Trim();
+        string name = action.Groups["name"].Value;
+        string label = Regex.Replace(action.Groups["label"].Value, @"\s+\p{Lu}[\w ]*:\s*\[\d+\]", "").Trim();
+        if (label.Length != 0) return label;
+        if (name.StartsWith("Wix4", StringComparison.Ordinal)) return "";
+        return Regex.Replace(name, @"(?<=[a-z])(?=[A-Z])", " ");
     }
 
     private void SetActions(string primary, Action primaryAction, string secondary, Action secondaryAction)

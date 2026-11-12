@@ -49,7 +49,7 @@ Run the same Setup executable again to repair or remove an installed copy. Run a
 From the download directory, install the `.deb` with APT so it can resolve runtime dependencies:
 
 ```sh
-sudo apt install ./cpustats_1.1.2_amd64.deb
+sudo apt install ./cpustats_1.1.3_amd64.deb
 ```
 
 Reconnect the case display after installation, then open **CPUSTATS** from the application menu. The installed udev rule grants the active local desktop session access to the L280 USB display. Run CPUSTATS as your regular desktop user.

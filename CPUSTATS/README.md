@@ -31,12 +31,12 @@ and registers the sensor service. The desktop app launches with the user's regul
 dotnet tool install wix --version 4.0.6 --tool-path work/wix
 $env:DOTNET_ROLL_FORWARD = 'Major'
 .\work\wix\wix.exe extension add WixToolset.Util.wixext/4.0.6
-.\packaging\windows\Build-Setup.ps1 -Version 1.1.2 -Wix work/wix/wix.exe -Output work/installer-win
+.\packaging\windows\Build-Setup.ps1 -Version 1.1.3 -Wix work/wix/wix.exe -Output work/installer-win
 ```
 
 ```sh
-dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r linux-x64 --self-contained true -p:Version=1.1.2 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o work/installer-linux
-sh packaging/linux/build-deb.sh 1.1.2 work/installer-linux/CPUSTATS work/cpustats_1.1.2_amd64.deb
+dotnet publish CPUSTATS/CPUSTATS.csproj -c Release -r linux-x64 --self-contained true -p:Version=1.1.3 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o work/installer-linux
+sh packaging/linux/build-deb.sh 1.1.3 work/installer-linux/CPUSTATS work/cpustats_1.1.3_amd64.deb
 ```
 
 ### Linux telemetry and device access

@@ -11,6 +11,7 @@ internal sealed class WindowsTray : IDisposable
     private const uint TrayMessage = 0x8001;
     private const uint AddIcon = 0, DeleteIcon = 2, SetIconVersion = 4;
     private const uint MenuSeparator = 0x800, MenuPopup = 0x10, MenuChecked = 0x8, MenuDisabled = 0x3;
+    private static bool _systemMenuTheme;
     private readonly NativeMenu _menu;
     private readonly Action _open;
     private readonly SubclassProc _callback;
@@ -41,6 +42,18 @@ internal sealed class WindowsTray : IDisposable
             return tray;
         tray.Dispose();
         return null;
+    }
+
+    internal static void UseSystemMenuTheme()
+    {
+        // The native menu theme entry points use ordinals and changed in Windows 10 1903.
+        if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 18362)) return;
+        try
+        {
+            SetPreferredAppMode(1); // AllowDark, following the Windows app theme.
+            _systemMenuTheme = true;
+        }
+        catch (EntryPointNotFoundException) { }
     }
 
     private bool RegisterIcon()
@@ -76,6 +89,11 @@ internal sealed class WindowsTray : IDisposable
 
     private void ShowMenu(int x, int y)
     {
+        if (_systemMenuTheme)
+        {
+            try { FlushMenuThemes(); }
+            catch (EntryPointNotFoundException) { _systemMenuTheme = false; }
+        }
         var commands = new List<NativeMenuItem>();
         var popup = BuildMenu(_menu, commands);
         if (popup == 0) return;
@@ -147,6 +165,8 @@ internal sealed class WindowsTray : IDisposable
     private struct Point { public int X, Y; }
 
     private delegate nint SubclassProc(nint hwnd, uint message, nuint wParam, nint lParam, nuint id, nuint data);
+    [DllImport("uxtheme.dll", EntryPoint = "#135")] private static extern int SetPreferredAppMode(int mode);
+    [DllImport("uxtheme.dll", EntryPoint = "#136")] private static extern void FlushMenuThemes();
     [DllImport("comctl32.dll")] private static extern bool SetWindowSubclass(nint hwnd, SubclassProc callback, nuint id, nuint data);
     [DllImport("comctl32.dll")] private static extern bool RemoveWindowSubclass(nint hwnd, SubclassProc callback, nuint id);
     [DllImport("comctl32.dll")] private static extern nint DefSubclassProc(nint hwnd, uint message, nuint wParam, nint lParam);
