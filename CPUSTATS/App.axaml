@@ -1,0 +1,50 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="CPUSTATS.App">
+  <TrayIcon.Icons>
+    <TrayIcons>
+      <TrayIcon Icon="/Assets/Brand/cpustats.ico" ToolTipText="CPUSTATS" Clicked="ShowWindow" />
+    </TrayIcons>
+  </TrayIcon.Icons>
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="GaugeWindow">#171D20</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugePanel">#20282C</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeControl">#273237</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeHover">#33434A</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeLine">#39474D</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeText">#F2F6F4</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeMuted">#AFBEC1</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeCpu">#85E6C3</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeGpu">#ACCAFF</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeTrack">#34434A</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeNotice">#F2CB8D</SolidColorBrush>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="GaugeWindow">#E9EFEE</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugePanel">#FAFCFB</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeControl">#EDF3F1</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeHover">#DFEBE7</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeLine">#CCDAD6</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeText">#152522</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeMuted">#4A625E</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeCpu">#0B7056</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeGpu">#2B5AA4</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeTrack">#DCE7E5</SolidColorBrush>
+          <SolidColorBrush x:Key="GaugeNotice">#7C4A0D</SolidColorBrush>
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+  <Application.Styles>
+    <FluentTheme>
+      <FluentTheme.Palettes>
+        <ColorPaletteResources x:Key="Light" Accent="#0B7056"/>
+        <ColorPaletteResources x:Key="Dark" Accent="#85E6C3"/>
+      </FluentTheme.Palettes>
+    </FluentTheme>
+    <StyleInclude Source="avares://CPUSTATS/Styles/CPUSTATS.axaml"/>
+  </Application.Styles>
+</Application>

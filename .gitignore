@@ -1,0 +1,15 @@
+.vs/
+bin/
+obj/
+intermediatexaml/
+AppPackages/
+TestResults/
+__pycache__/
+*.user
+*.suo
+*.local.md
+/diagnostics/
+/scratchpad/
+/work/
+/CPUSTATS/.nuget/
+/CPUSTATS/Windows/IntelMCHBAR.bin

@@ -1,0 +1,161 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:CPUSTATS.Controls">
+  <Style Selector="Grid.page">
+    <Setter Property="Margin" Value="26,24,26,26"/>
+  </Style>
+  <Style Selector="StackPanel.overview">
+    <Setter Property="Spacing" Value="17"/>
+  </Style>
+  <Style Selector="TextBlock.overview-title">
+    <Setter Property="FontSize" Value="32"/>
+  </Style>
+  <Style Selector="StackPanel.metric">
+    <Setter Property="Margin" Value="22,19"/>
+    <Setter Property="Spacing" Value="4"/>
+  </Style>
+  <Style Selector="TextBlock.model">
+    <Setter Property="Height" Value="34"/>
+    <Setter Property="LineHeight" Value="17"/>
+  </Style>
+  <Style Selector="TextBlock.temperature-unit">
+    <Setter Property="FontSize" Value="23"/>
+    <Setter Property="Margin" Value="0,11,0,0"/>
+  </Style>
+  <Style Selector="controls|UsageStrip.metric-strip">
+    <Setter Property="Height" Value="8"/>
+  </Style>
+  <Style Selector="Border.memory-row">
+    <Setter Property="Padding" Value="22,15"/>
+  </Style>
+  <Style Selector="Window.wide Grid.page">
+    <Setter Property="Margin" Value="38,34,38,38"/>
+  </Style>
+  <Style Selector="Window.wide StackPanel.overview">
+    <Setter Property="Spacing" Value="22"/>
+  </Style>
+  <Style Selector="Window.wide TextBlock.overview-title">
+    <Setter Property="FontSize" Value="39"/>
+  </Style>
+  <Style Selector="Window.wide StackPanel.metric">
+    <Setter Property="Margin" Value="32,27"/>
+    <Setter Property="Spacing" Value="6"/>
+  </Style>
+  <Style Selector="Window.wide TextBlock.metric-label">
+    <Setter Property="FontSize" Value="20"/>
+  </Style>
+  <Style Selector="Window.wide TextBlock.model">
+    <Setter Property="Height" Value="40"/>
+    <Setter Property="LineHeight" Value="20"/>
+    <Setter Property="FontSize" Value="15"/>
+  </Style>
+  <Style Selector="Window.wide TextBlock.temperature">
+    <Setter Property="FontSize" Value="84"/>
+    <Setter Property="LineHeight" Value="96"/>
+  </Style>
+  <Style Selector="Window.wide TextBlock.temperature-unit">
+    <Setter Property="FontSize" Value="30"/>
+    <Setter Property="Margin" Value="0,15,0,0"/>
+  </Style>
+  <Style Selector="Window.wide controls|UsageStrip.metric-strip">
+    <Setter Property="Height" Value="10"/>
+  </Style>
+  <Style Selector="Window.wide Border.memory-row">
+    <Setter Property="Padding" Value="32,20"/>
+  </Style>
+  <Style Selector="Window.large Grid.page">
+    <Setter Property="Margin" Value="52,50,52,52"/>
+  </Style>
+  <Style Selector="Window.large StackPanel.metric">
+    <Setter Property="Margin" Value="44,38"/>
+    <Setter Property="Spacing" Value="8"/>
+  </Style>
+  <Style Selector="Window.large TextBlock.temperature">
+    <Setter Property="FontSize" Value="108"/>
+    <Setter Property="LineHeight" Value="124"/>
+  </Style>
+  <Style Selector="Window.large TextBlock.temperature-unit">
+    <Setter Property="FontSize" Value="36"/>
+    <Setter Property="Margin" Value="0,19,0,0"/>
+  </Style>
+  <Style Selector="Window.large Border.memory-row">
+    <Setter Property="Padding" Value="44,23"/>
+  </Style>
+  <Style Selector="TextBlock.muted">
+    <Setter Property="Foreground" Value="{DynamicResource GaugeMuted}"/>
+    <Setter Property="FontSize" Value="13"/>
+  </Style>
+  <Style Selector="TextBlock.section">
+    <Setter Property="FontSize" Value="17"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+  </Style>
+  <Style Selector="TextBlock.temperature">
+    <Setter Property="FontSize" Value="62"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="LineHeight" Value="72"/>
+  </Style>
+  <Style Selector="Button.gauge">
+    <Setter Property="Background" Value="{DynamicResource GaugeControl}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource GaugeLine}"/>
+    <Setter Property="Foreground" Value="{DynamicResource GaugeText}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="MinHeight" Value="42"/>
+    <Setter Property="Padding" Value="12,8"/>
+    <Setter Property="Cursor" Value="Hand"/>
+  </Style>
+  <Style Selector="Button.gauge:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource GaugeHover}"/>
+    <Setter Property="Foreground" Value="{DynamicResource GaugeText}"/>
+  </Style>
+  <Style Selector="Button.gauge:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource GaugeTrack}"/>
+    <Setter Property="Foreground" Value="{DynamicResource GaugeText}"/>
+  </Style>
+  <Style Selector="Button.gauge:focus-visible /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="BorderBrush" Value="{DynamicResource GaugeCpu}"/>
+  </Style>
+  <Style Selector="ComboBox.preference">
+    <Setter Property="MinHeight" Value="44"/>
+    <Setter Property="MaxDropDownHeight" Value="300"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="Padding" Value="13,8"/>
+    <Setter Property="Background" Value="{DynamicResource GaugeControl}"/>
+    <Setter Property="Foreground" Value="{DynamicResource GaugeText}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource GaugeLine}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="Cursor" Value="Hand"/>
+  </Style>
+  <Style Selector="ComboBox.preference:pointerover">
+    <Setter Property="Background" Value="{DynamicResource GaugeHover}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource GaugeMuted}"/>
+  </Style>
+  <Style Selector="ComboBox.preference:focus-visible /template/ Border#HighlightBackground">
+    <Setter Property="Background" Value="{DynamicResource GaugeControl}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource GaugeCpu}"/>
+  </Style>
+  <Style Selector="ComboBox.preference /template/ Border#PopupBorder">
+    <Setter Property="Background" Value="{DynamicResource GaugePanel}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource GaugeLine}"/>
+    <Setter Property="CornerRadius" Value="9"/>
+    <Setter Property="Padding" Value="5"/>
+  </Style>
+  <Style Selector="ComboBoxItem.preference-item">
+    <Setter Property="MinHeight" Value="38"/>
+    <Setter Property="Padding" Value="10,6"/>
+    <Setter Property="CornerRadius" Value="5"/>
+    <Setter Property="Foreground" Value="{DynamicResource GaugeText}"/>
+  </Style>
+  <Style Selector="ComboBoxItem.preference-item:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource GaugeHover}"/>
+    <Setter Property="Foreground" Value="{DynamicResource GaugeText}"/>
+  </Style>
+  <Style Selector="ComboBoxItem.preference-item:selected /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource GaugeControl}"/>
+    <Setter Property="Foreground" Value="{DynamicResource GaugeCpu}"/>
+  </Style>
+  <Style Selector="ComboBoxItem.preference-item:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource GaugeHover}"/>
+    <Setter Property="Foreground" Value="{DynamicResource GaugeCpu}"/>
+  </Style>
+</Styles>

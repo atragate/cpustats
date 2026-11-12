@@ -1,0 +1,144 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:CPUSTATS.Controls"
+        x:Class="CPUSTATS.MainWindow"
+        Title="CPUSTATS"
+        Width="760" Height="490" MinWidth="490" MinHeight="410"
+        FontFamily="{StaticResource InterFont}" FontSize="14"
+        Background="{DynamicResource GaugeWindow}" Foreground="{DynamicResource GaugeText}"
+        KeyDown="Window_KeyDown" SizeChanged="Window_SizeChanged">
+  <Grid RowDefinitions="Auto,*">
+    <Border Grid.Row="0" BorderBrush="{DynamicResource GaugeLine}" BorderThickness="0,0,0,1"
+            Background="{DynamicResource GaugePanel}">
+      <Grid ColumnDefinitions="*,Auto" Margin="26,12">
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <Image x:Name="BrandMark" Width="35" Height="35" IsHitTestVisible="False"/>
+          <TextBlock Text="CPUSTATS" FontSize="19" FontWeight="SemiBold" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Button x:Name="SettingsButton" Grid.Column="1" Classes="gauge" Width="44" Padding="0"
+                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="SettingsButton_Click"
+                AutomationProperties.Name="Settings" ToolTip.Tip="Settings">
+          <PathIcon Width="19" Height="19"
+                    Data="M12 8.5 A3.5 3.5 0 1 0 12 15.5 A3.5 3.5 0 1 0 12 8.5 Z M10 2 L14 2 L14.6 4.5 L16.3 5.5 L18.8 4.8 L20.8 8.2 L18.9 10 L18.9 12 L21 14 L19 17.5 L16.4 16.8 L14.6 17.8 L14 21 L10 21 L9.4 17.8 L7.6 16.8 L5 17.5 L3 14 L5.1 12 L5.1 10 L3.2 8.2 L5.2 4.8 L7.7 5.5 L9.4 4.5 Z M12 6.8 A5.2 5.2 0 1 0 12 17.2 A5.2 5.2 0 1 0 12 6.8 Z"/>
+        </Button>
+        <Button x:Name="BackButton" Grid.Column="1" Classes="gauge" Content="Back to overview"
+                IsVisible="False" Click="BackButton_Click"/>
+      </Grid>
+    </Border>
+    <ScrollViewer Grid.Row="1" x:Name="PageScroll" HorizontalScrollBarVisibility="Disabled">
+      <Grid Classes="page">
+        <StackPanel x:Name="OverviewPage" Classes="overview" MaxWidth="1440">
+          <StackPanel Spacing="4">
+            <TextBlock Text="PC overview" Classes="overview-title" FontWeight="SemiBold"/>
+            <TextBlock Text="Live temperatures and usage" Classes="muted"/>
+          </StackPanel>
+          <Border Background="{DynamicResource GaugePanel}" BorderBrush="{DynamicResource GaugeLine}"
+                  BorderThickness="1" CornerRadius="13">
+            <Grid RowDefinitions="Auto,Auto">
+              <Grid ColumnDefinitions="*,1,*">
+                <StackPanel Classes="metric">
+                  <TextBlock Text="CPU" Classes="section metric-label"/>
+                  <TextBlock x:Name="CpuModel" Text="Detecting processor…" Classes="muted model"
+                             TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxLines="2"/>
+                  <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,2,0,6">
+                    <TextBlock x:Name="CpuTemperature" Text="—" Classes="temperature" Foreground="{DynamicResource GaugeCpu}"/>
+                    <TextBlock x:Name="CpuUnit" Text="°C" IsVisible="False" Classes="temperature-unit" Foreground="{DynamicResource GaugeCpu}"/>
+                  </StackPanel>
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="Usage" Classes="muted"/>
+                    <TextBlock Grid.Column="1" x:Name="CpuUsage" Text="—" FontWeight="SemiBold"/>
+                  </Grid>
+                  <controls:UsageStrip x:Name="CpuStrip" Classes="metric-strip" Margin="0,4,0,0" IsHitTestVisible="False"
+                                       Fill="{DynamicResource GaugeCpu}" Track="{DynamicResource GaugeTrack}"/>
+                </StackPanel>
+                <Border Grid.Column="1" Background="{DynamicResource GaugeLine}"/>
+                <StackPanel Grid.Column="2" Classes="metric">
+                  <TextBlock Text="GPU" Classes="section metric-label"/>
+                  <TextBlock x:Name="GpuModel" Text="Detecting graphics…" Classes="muted model"
+                             TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxLines="2"/>
+                  <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,2,0,6">
+                    <TextBlock x:Name="GpuTemperature" Text="—" Classes="temperature" Foreground="{DynamicResource GaugeGpu}"/>
+                    <TextBlock x:Name="GpuUnit" Text="°C" IsVisible="False" Classes="temperature-unit" Foreground="{DynamicResource GaugeGpu}"/>
+                  </StackPanel>
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="Usage" Classes="muted"/>
+                    <TextBlock Grid.Column="1" x:Name="GpuUsage" Text="—" FontWeight="SemiBold"/>
+                  </Grid>
+                  <controls:UsageStrip x:Name="GpuStrip" Classes="metric-strip" Margin="0,4,0,0" IsHitTestVisible="False"
+                                       Fill="{DynamicResource GaugeGpu}" Track="{DynamicResource GaugeTrack}"/>
+                </StackPanel>
+              </Grid>
+              <Border Grid.Row="1" Classes="memory-row" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource GaugeLine}">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                  <TextBlock Text="Memory" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                  <controls:UsageStrip Grid.Column="1" x:Name="RamStrip" Height="6" VerticalAlignment="Center" IsHitTestVisible="False"
+                                       Fill="{DynamicResource GaugeMuted}" Track="{DynamicResource GaugeTrack}"/>
+                  <TextBlock Grid.Column="2" x:Name="RamUsage" Text="—" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                </Grid>
+              </Border>
+            </Grid>
+          </Border>
+          <TextBlock x:Name="LastUpdated" Text="Waiting for the first reading…" Classes="muted"
+                     ToolTip.Tip="The time CPUSTATS last read your PC’s sensors."/>
+          <TextBlock x:Name="SensorNotice" IsVisible="False" TextWrapping="Wrap"
+                     FontSize="13" Foreground="{DynamicResource GaugeNotice}"/>
+        </StackPanel>
+
+        <StackPanel x:Name="SettingsPage" MaxWidth="720" Spacing="17" IsVisible="False">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Settings" FontSize="32" FontWeight="SemiBold"/>
+            <TextBlock Text="Choose what your case shows and how the app looks." Classes="muted" TextWrapping="Wrap"/>
+          </StackPanel>
+          <Border Background="{DynamicResource GaugePanel}" BorderBrush="{DynamicResource GaugeLine}"
+                  BorderThickness="1" CornerRadius="13">
+            <StackPanel>
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" Margin="18,15">
+                <StackPanel Spacing="4" VerticalAlignment="Center">
+                  <TextBlock Text="Case display" Classes="section"/>
+                  <TextBlock x:Name="DeviceStatus" Text="Looking for your display…" Classes="muted" TextWrapping="Wrap"/>
+                </StackPanel>
+                <Button x:Name="ReconnectButton" Grid.Column="1" Classes="gauge" Content="Reconnect"
+                        VerticalAlignment="Center" Click="ReconnectButton_Click"/>
+              </Grid>
+              <Border Height="1" Background="{DynamicResource GaugeLine}"/>
+              <StackPanel Margin="18,15" Spacing="13">
+                <Grid ColumnDefinitions="*,2*" ColumnSpacing="14">
+                  <StackPanel Spacing="3" VerticalAlignment="Center">
+                    <TextBlock Text="Show on case" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                  </StackPanel>
+                  <ComboBox x:Name="DisplayMode" Grid.Column="1" Classes="preference"
+                            AutomationProperties.Name="Show on case" SelectionChanged="Preferences_SelectionChanged">
+                    <ComboBoxItem Classes="preference-item" Content="Alternate temp and usage"/>
+                    <ComboBoxItem Classes="preference-item" Content="Temperature (°C)"/>
+                    <ComboBoxItem Classes="preference-item" Content="Usage (%)"/>
+                    <ComboBoxItem Classes="preference-item" Content="Temperature (°F)"/>
+                  </ComboBox>
+                </Grid>
+                <Grid ColumnDefinitions="*,2*" ColumnSpacing="14">
+                  <StackPanel Spacing="3" VerticalAlignment="Center">
+                    <TextBlock Text="Switch every" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="RotationHint" Text="When alternating" Classes="muted" TextWrapping="Wrap"/>
+                  </StackPanel>
+                  <ComboBox x:Name="Rotation" Grid.Column="1" Classes="preference"
+                            AutomationProperties.Name="Switch every" SelectionChanged="Preferences_SelectionChanged"/>
+                </Grid>
+              </StackPanel>
+              <Border Height="1" Background="{DynamicResource GaugeLine}"/>
+              <Grid ColumnDefinitions="*,2*" ColumnSpacing="14" Margin="18,15">
+                <TextBlock Text="App theme" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <ComboBox x:Name="ThemeChoice" Grid.Column="1" Classes="preference"
+                          AutomationProperties.Name="App theme" SelectionChanged="Preferences_SelectionChanged">
+                  <ComboBoxItem Classes="preference-item" Content="Match system"/>
+                  <ComboBoxItem Classes="preference-item" Content="Light"/>
+                  <ComboBoxItem Classes="preference-item" Content="Dark"/>
+                </ComboBox>
+              </Grid>
+            </StackPanel>
+          </Border>
+          <TextBlock x:Name="SettingsNotice" IsVisible="False" TextWrapping="Wrap"
+                     FontSize="13" Foreground="{DynamicResource GaugeNotice}"/>
+        </StackPanel>
+      </Grid>
+    </ScrollViewer>
+  </Grid>
+</Window>

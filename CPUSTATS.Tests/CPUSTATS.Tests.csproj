@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../CPUSTATS/Models/L280DeviceInfo.cs" Link="Models/L280DeviceInfo.cs" />
+    <Compile Include="../CPUSTATS/Models/DashboardLayout.cs" Link="Models/DashboardLayout.cs" />
+    <Compile Include="../CPUSTATS/Services/HidTransport.cs" Link="Services/HidTransport.cs" />
+    <Compile Include="../CPUSTATS/Services/LinuxHidTransport.cs" Link="Services/LinuxHidTransport.cs" />
+    <Compile Include="../CPUSTATS/Services/L280Protocol.cs" Link="Services/L280Protocol.cs" />
+    <Compile Include="../CPUSTATS/Services/TelemetrySnapshot.cs" Link="Services/TelemetrySnapshot.cs" />
+    <Compile Include="../CPUSTATS/Services/LinuxIntelGpuTemperature.cs" Link="Services/LinuxIntelGpuTemperature.cs" />
+    <Compile Include="../CPUSTATS/Services/WindowsIntelGpuTemperature.cs" Link="Services/WindowsIntelGpuTemperature.cs" />
+    <Compile Include="../CPUSTATS/Services/TelemetryReport.cs" Link="Services/TelemetryReport.cs" />
+    <Compile Include="../CPUSTATS/Services/LovingCoolFeed.cs" Link="Services/LovingCoolFeed.cs" />
+    <Compile Include="../CPUSTATS/Services/LayoutStore.cs" Link="Services/LayoutStore.cs" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="HidSharp" Version="2.6.4" />
+    <PackageReference Include="System.Management" Version="10.0.2" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.0" />
+  </ItemGroup>
+</Project>
